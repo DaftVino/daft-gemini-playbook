@@ -10,6 +10,8 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-21
+
 ### Added
 
 - `templates/severity-matrix-template.md` — the reference file 041 now depends on. Structure and
@@ -49,5 +51,6 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
   service) are isolated in `prompts/industry-multi-unit/` so the core stays applicable to any
   multi-entity, multi-site organization. See ADR 0002.
 
-[Unreleased]: https://github.com/DaftVino/gemini-prompt-library/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/DaftVino/gemini-prompt-library/releases/tag/v0.1.0
+[Unreleased]: https://github.com/DaftVino/daft-gemini-playbook/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DaftVino/daft-gemini-playbook/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/DaftVino/daft-gemini-playbook/releases/tag/v0.1.0
