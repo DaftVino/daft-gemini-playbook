@@ -42,7 +42,8 @@ reference leave taken, medical matters, or any protected characteristic.
 - **Escalates to Red where the review may lead to a rating affecting pay, a performance plan, or
   termination. Authorized reviewer: HR lead before the conversation.**
 - Check the coverage figure in section 4. If most evidence is recent, gather more before proceeding.
-- Section 5 is a finding about management, not about the employee. Read it that way.
+- Treat section 5 as a finding about management rather than about the employee: goals with no
+  evidence either way mean nobody was tracking them.
 - The manager writes the review. This assembles the evidence.
 
 ## Example follow-up

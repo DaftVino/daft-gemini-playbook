@@ -49,7 +49,7 @@ Read three things:
 - [ ] Are the required sources specific enough that a new user knows exactly what to attach?
 - [ ] Is the risk label right, and does the file carry the core blocks that label requires?
 - [ ] Does the output format include Owner, Due Date, and Evidence where an action is produced?
-- [ ] Is there anything in the file that would be embarrassing or harmful if published? (It is.)
+- [ ] Is there anything in the file that should not travel with a copy of this library?
 
 ## Commits and branches
 

@@ -2,7 +2,7 @@
 
 How this library is organized and why. Living document — update it when the structure changes.
 
-## What this repository is
+## What this is
 
 A version-controlled prompt library, not an application. The "system" is a set of Markdown
 artifacts that people copy into Google Gemini, plus the governance that decides which of those
@@ -46,8 +46,37 @@ gemini-prompt-library/
 └── .github/                  # issue + PR templates, CI
 ```
 
-`docs/` is flat apart from `adr/` and `designs/`, per the
-[repo standards](../engineering-standards/repo-standards.md) §3.
+## Conventions
+
+Organization and naming follow the owner's `engineering-standards` repo. Those standards are not
+vendored here — they govern many repositories and would go stale in each one. What they require of
+*this* repo is stated below, so the rules are enforceable without an external lookup.
+
+**Naming — lowercase-kebab, everywhere.** Folders, docs, and config files. Prompt files add a
+permanent numeric prefix: `NNN-short-slug.md`. Uppercase is reserved for the canonical root files
+the wider ecosystem treats specially: `README.md`, `LICENSE`, `CHANGELOG.md`, `CONTRIBUTING.md`,
+`CLAUDE.md`. Nothing else gets uppercase — architecture docs live at `docs/architecture.md`, never
+`ARCHITECTURE.md`.
+
+**Root files.** `README.md`, `LICENSE`, `CHANGELOG.md`, `CLAUDE.md`, `CONTRIBUTING.md`,
+`.gitignore`, `.gitattributes`. Anything else that reads like documentation belongs in `docs/`.
+
+**`docs/` is flat** apart from `adr/` and `designs/`. No `docs/bugs/`, `docs/fixes/`,
+`docs/plans/`, no `todo.md` — bugs are GitHub Issues, fixes are PRs, plans are `docs/designs/`,
+lasting decisions are `docs/adr/`. Create a folder only when there is content for it.
+
+**Branching and commits.** GitHub Flow: `main` is always releasable, work happens on short-lived
+`type/short-slug` branches, merged by PR and squashed. Conventional Commits — prompt content
+changes use `docs:` unless they touch the validator. Every change to `main` goes through a PR, even
+solo; the PR is the review record for a library whose whole premise is reviewability.
+
+**Versioning.** SemVer applied to content, as defined in `CHANGELOG.md`. Every released version
+gets a changelog entry, an annotated `vX.Y.Z` tag, and a release created from that tag. A changelog
+entry with no matching tag is a defect.
+
+**ADRs** are written when a decision is expensive to reverse or has already been argued twice, in
+lightweight MADR format, one page. They are never edited after acceptance — a reversal is a new ADR
+that supersedes the old one, and only the old one's Status line changes.
 
 ## Category model
 
@@ -92,7 +121,7 @@ referenced by Gems, Studio flows, saved Docs, the training material, and the mas
 - Renaming a prompt is a normal change; the ID in the title line stays.
 - New prompts take the next unused number.
 
-01–75 came from the original catalog. 76–112 are new. Gaps in the sequence are expected over time.
+Gaps in the sequence are expected over time, as prompts are retired and new ones take fresh numbers.
 
 ## The prompt-file contract
 

@@ -27,8 +27,8 @@ Return:
 5. Steps, numbered, each one a single action with an observable result
 6. Decision points: the condition, the options, and who decides
 7. **Judgement calls** — the steps where the experienced person decides based on something not
-   written down. List these explicitly with what they consider. These are what makes the process
-   undocumentable by anyone except them, and capturing them is the entire value of this exercise.
+   written down. List these explicitly, with what they weigh. These are what makes the process
+   reproducible by someone else, so treat them as required output rather than as an appendix.
 8. What can go wrong, how to tell, and what to do about it
 9. Outputs and where they go
 10. Records to retain
@@ -47,8 +47,8 @@ than one with an acknowledged hole.
 
 - Have someone who has never done the task follow the SOP while the expert watches without helping.
   Every gap surfaces in about ten minutes, and nothing else finds them.
-- Section 7 is the point. If it is empty, the interview was not deep enough — ask "how do you know
-  when to do X?" until you get something other than "you just know."
+- If section 7 is empty, the interview was not deep enough. Ask "how do you know when to do X?"
+  until you get an answer other than "you just know."
 - Do not document a step you should be eliminating. Check section 13 first.
 
 ## Example follow-up

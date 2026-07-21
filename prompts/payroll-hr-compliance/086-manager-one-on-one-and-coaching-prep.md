@@ -34,7 +34,7 @@ or a script. Do not draw conclusions about their capability — prepare question
 
 ## Validation before use
 
-- Section 1 is the point. If your own commitments are outstanding, address them first.
+- Start with section 1. If your own commitments are outstanding, address those before raising theirs.
 - Check whether apparent performance issues are system problems the manager cannot control.
 - Notes from a one-on-one are records. Keep them factual and free of characterization.
 

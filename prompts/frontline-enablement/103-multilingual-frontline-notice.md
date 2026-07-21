@@ -21,8 +21,8 @@ Prepare [notice / instruction] for frontline distribution in [languages], using 
 
 Return, for each language:
 (1) The translated text
-(2) A back-translation into English, produced independently of the source — this is what lets a
-    non-speaker check the meaning survived, and it is the whole point of the exercise
+(2) A back-translation into English, produced independently of the source, so a non-speaker can
+    check that the meaning survived
 (3) A note on every place where the meaning shifted, could not be preserved, or required a choice
 (4) Terms taken from @Glossary of Approved Terms, and any term not in the glossary that should be
     added

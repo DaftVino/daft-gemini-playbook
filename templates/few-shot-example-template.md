@@ -48,7 +48,8 @@ repetition.]
 
 ## What the reviewer still had to do
 
-- [The human step. Every example must have one — it is the point.]
+- [The human step. Every example must have one; an example with nothing left for a reviewer to do
+  teaches the wrong lesson.]
 
 ## What went wrong the first time
 

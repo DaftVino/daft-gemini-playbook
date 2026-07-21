@@ -4,7 +4,7 @@ Two separate questions, often confused:
 
 1. **What may go into a Gemini prompt** when you are doing real work. Governed by your
    organization's data policy and Workspace configuration.
-2. **What may go into this repository.** Governed by this document. The answer is: nothing real.
+2. **What may go into the library.** Governed by this document. The answer is: nothing real.
 
 ---
 
@@ -53,10 +53,10 @@ not, until that page is removed.
 
 ---
 
-## Part 2 — What may go into this repository
+## Part 2 — What may go into the library
 
-**Nothing real. Ever.** This repository is written to be publishable, and is treated as if it
-already were.
+**Nothing real. Ever.** The library is a distributable artifact. Whatever is committed to it should
+be safe in the hands of anyone who ends up holding a copy.
 
 ### Prohibited in any tracked file — including examples, tests, issues, and commit messages
 
@@ -112,5 +112,5 @@ reliably misses something.
 
 `scripts/validate-prompts.mjs` flags likely leaks — email addresses, long digit runs, dollar amounts
 of four or more digits, phone-number patterns. It is a backstop with a high false-negative rate, not
-a substitute for the author's judgement. Enable GitHub secret scanning and push protection, and
-install the gitleaks pre-commit hook, per repo standards §2.1.
+a substitute for the author's judgement. Enable secret scanning and push protection on the remote,
+and install a gitleaks pre-commit hook so a credential never reaches history in the first place.

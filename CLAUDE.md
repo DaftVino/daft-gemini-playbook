@@ -9,7 +9,9 @@ under `prompts/`, carrying its own risk label, required sources, owner, and vali
 ## Key docs
 
 - Repo layout and conventions: `docs/architecture.md`
-- Engineering conventions: [engineering-standards/repo-standards.md](engineering-standards/repo-standards.md)
+- Engineering conventions: the owner's `engineering-standards` repo — naming, layout, branching,
+  commits, ADR/design-doc rules. It governs this repo but is **not vendored here**; consult your
+  local checkout. The rules it sets for this repo are summarized in `docs/architecture.md`.
 - Prompt-file contract: `docs/prompt-standard.md` — every prompt file must satisfy this
 - Risk labels and approval boundaries: `docs/risk-and-approval.md`
 - Data handling (what must never appear in this repo): `docs/data-handling-rules.md`

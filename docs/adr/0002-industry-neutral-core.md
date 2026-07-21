@@ -17,7 +17,7 @@ very different costs:
    are not restaurant-*flavored*; they are restaurant-*shaped*, and generalizing them would destroy
    what makes them useful.
 
-The library is intended to be publishable and reusable. Roughly 90% of it — close, AP, cash
+The library is intended to be broadly reusable. Roughly 90% of it — close, AP, cash
 forecasting, leases, COI compliance, access reviews, incident triage, inbox architecture — is
 generic to any multi-entity, multi-site organization. Leaving it dressed as restaurant material
 makes it look inapplicable to readers it would serve well.
@@ -66,7 +66,7 @@ Prompt IDs are unaffected by the move. Category membership is metadata; the ID i
 - **Keep the restaurant framing throughout.** Zero rewrite risk, narrowest audience, and it obscures
   that most of the content is general. Rejected.
 - **Fully genericize and drop industry-specific prompts.** Loses real, hard-won operational value —
-  food cost and waste analysis is among the most useful material in the original catalog. Rejected.
+  food cost and waste analysis is among the most useful material in the set. Rejected.
 - **Tag industry-specific prompts in metadata but leave them in functional categories.** Keeps
   functional grouping intact, but makes it impossible to hand someone "the core library" as a unit,
   and every core category becomes partly inapplicable to a non-food-service reader. Rejected in

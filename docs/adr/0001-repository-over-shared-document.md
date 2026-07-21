@@ -37,7 +37,8 @@ GitHub. The repository is the source of truth; the Drive copy is a publication o
 - Prompt IDs give Gems, flows, and training material a stable reference.
 - CI can mechanically enforce the prompt-file contract, risk labels, and sanitization checks —
   `scripts/validate-prompts.mjs`.
-- The library is publishable, which forces the discipline that no real business data enters it.
+- Treating the library as a distributable artifact forces the discipline that no real business data
+  enters it.
 
 **Bad / accepted costs**
 

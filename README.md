@@ -23,6 +23,7 @@ analyst — the worst case of a wrong answer is wasted review time, not an execu
 |---|---|
 | Looking for a prompt | **[The catalog →](prompts/index.md)** |
 | Using Gemini and want better output | [Operating guide](docs/gemini-operating-guide.md) |
+| Learning this properly, at your own pace | [NotebookLM study guide](docs/notebooklm-study-guide.md) |
 | Rolling this out to a team | [Workspace setup runbook](docs/workspace-setup.md) |
 | Deciding what needs approval | [Risk labels and approval boundaries](docs/risk-and-approval.md) |
 | Turning a prompt into a saved assistant | [Gems guide](docs/gems-guide.md) |
@@ -127,8 +128,8 @@ automation is the most expensive mistake available here.
 
 ## No real data, ever
 
-Nothing in this repository is real. No organization, entity, site, vendor, landlord, or person
-names. No account numbers, real figures, contract terms, or credentials. Placeholders are
+No real data appears anywhere in the library. No organization, entity, site, vendor, landlord, or
+person names. No account numbers, real figures, contract terms, or credentials. Placeholders are
 `[bracketed]`; examples are synthetic.
 
 This is not caution, it is what makes the prompts work — a prompt that says "compare against the Q3
@@ -149,26 +150,22 @@ node scripts/validate-prompts.mjs --write-index    # regenerate prompts/index.md
 `prompts/index.md` is generated — never hand-edit it. Prompt IDs are permanent: never renumbered,
 never reused, because Gems, flows, saved Docs, and training material reference them.
 
-Conventions follow [engineering-standards/repo-standards.md](engineering-standards/repo-standards.md).
-Layout and rationale: [`docs/architecture.md`](docs/architecture.md).
+Naming, layout, branching, and release conventions are stated in
+[`docs/architecture.md`](docs/architecture.md#conventions).
 
 ---
 
-## Provenance
-
-The catalog began as a single approved document of 75 prompts. This repository restructures it
-one-file-per-prompt with enforced governance ([ADR 0001](docs/adr/0001-repository-over-shared-document.md)),
-rewrites the core to be industry-neutral ([ADR 0002](docs/adr/0002-industry-neutral-core.md)), and
-adds 37 prompts covering gaps the original scope claimed but did not deliver — AR and collections,
-month-end close, accruals, the tax calendar, payment-instruction fraud verification, meeting actions,
-and the Slides, Calendar, Chat, and Forms surfaces.
+## Sources
 
 Prompt structure and the persona-task-context-format pattern follow Google's published Workspace
 prompting guidance. Gem and Workspace Studio mechanics follow the current
 [Gemini](https://support.google.com/gemini/answer/15235603?hl=en) and
 [Workspace Studio](https://support.google.com/workspace-studio/answer/16431105?hl=en) Help Center
-documentation — verify against those, not against this repository, for product behaviour and limits.
+documentation — check those, not this library, for product behaviour and current limits.
+
+Design decisions and their trade-offs are recorded in [`docs/adr/`](docs/adr/).
 
 ## License
 
-[MIT](LICENSE). The prompts are yours to adapt; the governance is the part worth keeping.
+[MIT](LICENSE). Adapt the prompts to your own vocabulary, thresholds, and approval matrix — that is
+what the placeholders are for.

@@ -35,8 +35,8 @@ Then summarize: total records required, total gaps, gaps by category, and the te
 
 - **Authorized reviewer: HR lead. Substantive work-authorization questions go to counsel — never
   resolve one from this output.**
-- Read the output specifically to confirm no personal identifiers appeared. This prompt forbids
-  them and the model will sometimes include them anyway; that check is the point of this bullet.
+- Read the output specifically to confirm no personal identifiers appeared. The prompt forbids them
+  and the model will sometimes include them regardless, so check rather than assume.
 - Access is HR only. Do not store the output in an operational folder or attach it to a ticket.
 - A gap in the index is not the same as a missing record. Confirm against the file before acting.
 

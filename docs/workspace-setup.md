@@ -150,6 +150,12 @@ Add one more for anyone using Red prompts: **produce the question, not the answe
 excellent at assembling a precise question for counsel, a broker, or the Controller, and unreliable
 at knowing whether it is allowed to answer it.
 
+For self-paced depth beyond the three habits, point people at
+[`notebooklm-study-guide.md`](notebooklm-study-guide.md). It has each person build their own
+NotebookLM notebook from the library and work through study paths for their role. It scales better
+than a training session and produces better questions, because people arrive having already argued
+with the material.
+
 ---
 
 ## Stage 6 — Only then, Gems and flows
