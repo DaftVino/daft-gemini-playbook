@@ -1,0 +1,75 @@
+name: Prompt defect
+description: A prompt produces wrong, unsafe, or unusable output
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not paste real business data, real output, or real figures into this issue.**
+        Describe the failure shape instead. See [docs/data-handling-rules.md](../blob/main/docs/data-handling-rules.md).
+
+  - type: input
+    id: prompt
+    attributes:
+      label: Prompt ID and name
+      placeholder: 011 — Monthly P&L Variance Commentary
+    validations: { required: true }
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where was it run?
+      options:
+        - Gemini app
+        - Gemini in Docs
+        - Gemini in Sheets
+        - Gemini in Gmail
+        - Gemini in Slides
+        - Gemini in Meet
+        - Google Chat
+        - NotebookLM
+        - Via a Gem
+        - Via a Workspace Studio flow
+    validations: { required: true }
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations: { required: true }
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      description: Describe the failure — invented a citation, arithmetic did not tie, ignored the output format, blended fact and inference. Do not paste the output itself if it contains real data.
+    validations: { required: true }
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - 'Unsafe — could have led to an action being taken on wrong information'
+        - 'Wrong — output was incorrect but a reviewer would catch it'
+        - 'Unusable — output was correct but not in a form anyone can act on'
+        - 'Cosmetic'
+    validations: { required: true }
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: What was attached, in shape terms
+      description: e.g. "12 weeks x 8 sites, one row per site-week, one merged header row" — not the data.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: The required sources listed in the prompt file were all attached
+          required: true
+        - label: The core blocks required by the prompt's risk label were appended
+          required: true
+        - label: This issue contains no real business data
+          required: true

@@ -1,0 +1,5 @@
+# Normalize line endings. Content repo + Linux CI — LF in the repository, always.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary

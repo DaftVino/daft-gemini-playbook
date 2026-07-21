@@ -1,0 +1,83 @@
+name: Prompt proposal
+description: Propose a new prompt for the library
+labels: [enhancement, prompt-proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: a prompt nobody runs twice is documentation debt. The bar is a **recurring**
+        job with a repeatable output. Read [docs/prompt-standard.md](../blob/main/docs/prompt-standard.md).
+
+        **Do not paste real business data into this issue** — no organization, site, vendor, or
+        person names, no real figures. See [docs/data-handling-rules.md](../blob/main/docs/data-handling-rules.md).
+
+  - type: input
+    id: job
+    attributes:
+      label: The recurring job
+      description: What work does this do, in one sentence?
+      placeholder: Validate a rent statement against the lease before it enters the AP approval path.
+    validations: { required: true }
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often is this done today?
+      options: [Daily, Weekly, Monthly, Quarterly, Annually, Ad hoc but repeatedly]
+    validations: { required: true }
+
+  - type: textarea
+    id: today
+    attributes:
+      label: How is it done today, and by whom?
+      description: Role, not name. Include what makes it slow or error-prone.
+    validations: { required: true }
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: What sources would a user attach?
+      description: The `@`-referenced material, specific enough that a new user knows what to look for.
+    validations: { required: true }
+
+  - type: textarea
+    id: output
+    attributes:
+      label: What does a good output look like?
+      description: The shape — table columns, sections. Not an example containing real data.
+    validations: { required: true }
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Proposed risk label
+      description: See docs/risk-and-approval.md. When in doubt, label up.
+      options: [Green, 'Green/Yellow', Yellow, 'Yellow/Red', Red]
+    validations: { required: true }
+
+  - type: input
+    id: owner
+    attributes:
+      label: Proposed owner
+      description: A role, never a person.
+      placeholder: Controller
+    validations: { required: true }
+
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is the cost of a wrong answer here?
+      description: This decides the risk label and what validation the prompt needs.
+    validations: { required: true }
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This does not duplicate an existing prompt in prompts/index.md
+          required: true
+        - label: This does not require Gemini to send, delete, pay, post, approve, or change access
+          required: true
+        - label: This issue contains no real business data
+          required: true
