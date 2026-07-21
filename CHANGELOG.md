@@ -29,5 +29,5 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
   service) are isolated in `prompts/industry-multi-unit/` so the core stays applicable to any
   multi-entity, multi-site organization. See ADR 0002.
 
-[Unreleased]: https://github.com/OWNER/gemini-prompt-library/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/OWNER/gemini-prompt-library/releases/tag/v0.1.0
+[Unreleased]: https://github.com/DaftVino/gemini-prompt-library/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/DaftVino/gemini-prompt-library/releases/tag/v0.1.0

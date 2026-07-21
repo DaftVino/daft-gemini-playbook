@@ -297,12 +297,13 @@ function writeIndex() {
   console.log(`Wrote prompts/index.md (${prompts.length} prompts)`);
 }
 
+// Mirrors github-slugger: strip invalid chars, then map EACH space to a hyphen without
+// collapsing — "Finance & Accounting" anchors as #finance--accounting, not #finance-accounting.
 const slug = (s) =>
   s
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-');
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/ /g, '-');
 
 // --- run ---------------------------------------------------------------------
 for (const file of walk(PROMPTS).sort()) validate(file);

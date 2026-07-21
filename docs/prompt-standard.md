@@ -50,7 +50,8 @@ The display name of the containing folder. If they disagree, the folder wins and
 
 ### Surface
 Where the prompt actually works best, from: Gemini app · Gemini in Docs · Gemini in Sheets ·
-Gemini in Gmail · Gemini in Slides · Gemini in Meet · Google Chat · NotebookLM.
+Gemini in Gmail · Gemini in Slides · Gemini in Meet · Google Chat · NotebookLM · Workspace Studio
+design (for prompts whose output is an automation specification).
 List at most three, most-preferred first. "Anywhere" is not an answer — if a prompt genuinely runs
 anywhere it is probably too vague to be useful.
 

@@ -29,7 +29,7 @@ Identify:
 (4) Accounts with very low activity that duplicate another account's purpose
 (5) Accounts in the chart with no activity in [N] periods
 (6) Site or cost-centre coding gaps — transactions with no site where the account requires one
-- (7) Entity coding that appears inconsistent with the vendor or the nature of the expense
+(7) Entity coding that appears inconsistent with the vendor or the nature of the expense
 
 Return: Finding | Account(s) | Vendor or transaction | Amount | Prior treatment | Recommended
 treatment | Basis in the coding guide | Owner

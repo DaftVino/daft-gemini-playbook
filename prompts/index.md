@@ -7,18 +7,18 @@ Risk labels and what each obliges: [docs/risk-and-approval.md](../docs/risk-and-
 
 | Category | Prompts |
 |---|---:|
-| [Lease, Property & Insurance](#lease-property-insurance) | 10 |
-| [Finance & Accounting](#finance-accounting) | 19 |
-| [Payroll, HR & Compliance](#payroll-hr-compliance) | 13 |
-| [Operations, Vendors & Facilities](#operations-vendors-facilities) | 14 |
+| [Lease, Property & Insurance](#lease-property--insurance) | 10 |
+| [Finance & Accounting](#finance--accounting) | 19 |
+| [Payroll, HR & Compliance](#payroll-hr--compliance) | 13 |
+| [Operations, Vendors & Facilities](#operations-vendors--facilities) | 14 |
 | [Operations Dashboards](#operations-dashboards) | 9 |
 | [Document Intelligence](#document-intelligence) | 5 |
-| [Gmail, Drive & Workflows](#gmail-drive-workflows) | 8 |
-| [Technology, Data & Security](#technology-data-security) | 11 |
+| [Gmail, Drive & Workflows](#gmail-drive--workflows) | 8 |
+| [Technology, Data & Security](#technology-data--security) | 11 |
 | [Executive Leadership](#executive-leadership) | 3 |
-| [Meetings & Collaboration](#meetings-collaboration) | 6 |
+| [Meetings & Collaboration](#meetings--collaboration) | 6 |
 | [Frontline Enablement](#frontline-enablement) | 7 |
-| [Industry Pack — Multi-Unit](#industry-pack-multi-unit) | 7 |
+| [Industry Pack — Multi-Unit](#industry-pack--multi-unit) | 7 |
 
 ## Lease, Property & Insurance
 
