@@ -49,7 +49,10 @@ correct answer. Do not report a system as recovered on the basis of a vendor's a
 - Verify affected-site counts against monitoring, not user reports — user reports systematically
   understate scope.
 - Confirm @Severity Matrix was attached. A severity assigned from general practice rather than from
-  ours will look reasonable and route the incident to the wrong people at the wrong hour.
+  ours will look reasonable and route the incident to the wrong people at the wrong hour. If your
+  organization has no matrix yet, build one from
+  [`templates/severity-matrix-template.md`](../../templates/severity-matrix-template.md) before
+  relying on this prompt.
 - Do not send the executive update until the facts/unconfirmed split has been checked by a second
   person.
 

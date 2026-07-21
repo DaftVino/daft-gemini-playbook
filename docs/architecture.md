@@ -39,7 +39,7 @@ gemini-prompt-library/
 │   ├── meetings-collaboration/
 │   ├── frontline-enablement/
 │   └── industry-multi-unit/  # INDUSTRY PACK — food service / multi-unit retail only
-├── templates/                # copyable patterns: prompt, Gem, Studio flow, few-shot example
+├── templates/                # copyable patterns: prompt, Gem, Studio flow, example, severity matrix
 ├── examples/                 # sanitized good-input / good-output pairs
 ├── docs/                     # governance, operating guides, Workspace runbooks, ADRs
 ├── scripts/                  # validate-prompts.mjs

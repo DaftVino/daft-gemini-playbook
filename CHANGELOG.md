@@ -10,6 +10,12 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 ## [Unreleased]
 
+### Added
+
+- `templates/severity-matrix-template.md` — the reference file 041 now depends on. Structure and
+  decision rules are specified; thresholds, response times, and escalation roles are placeholders
+  for the Technology lead to set. The filled-in copy belongs in the Shared Drive, not here.
+
 ### Changed
 
 - Dashboard prompts 051, 052, 055, 057 gain a RAG Status band. Thresholds come from the existing
