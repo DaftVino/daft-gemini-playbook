@@ -20,8 +20,10 @@ pre-read for [meeting] on [date], lasting [duration].
 
 Return:
 (1) An agenda where every item is one of three types, labelled: **Decide**, **Discuss**, or
-    **Inform**. Assign a time to each. Inform items should total no more than a fifth of the
-    meeting — anything else that is purely informational goes in the pre-read and is not discussed.
+    **Inform**. Assign minutes to each, and **the times must sum exactly to [duration]** — show the
+    running total. If they do not sum, cut items rather than compressing everything, and say what
+    you cut. Inform items should total no more than a fifth of the meeting; anything else purely
+    informational goes in the pre-read and is not discussed.
 (2) For every Decide item: the decision, the options, the recommendation, who decides, and what
     they need to know. A decision item with no named decider will not be decided.
 (3) A pre-read under two pages: the numbers, the changes since last time, and the open items —
@@ -48,3 +50,4 @@ the person who can make it is not attending — flag it instead.
 ## Change log
 
 - 2026-07-21 — Created — Meeting owner
+- 2026-07-21 — Agenda times must sum exactly to the meeting duration — Meeting owner

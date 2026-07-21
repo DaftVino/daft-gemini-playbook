@@ -23,12 +23,17 @@ A site that is below average and improving is a different conversation from one 
 average and deteriorating.
 
 Return:
-(1) The [N] sites that need a Director call, each with the exact evidence — metric, value, target,
+(1) A status line per site: Site | Status | Metrics driving the status | Trend vs. its own prior
+    four weeks. Set Status from the established targets, not from your own sense of what looks bad:
+    **Red** at or past the escalation threshold, **Amber** off target but inside it or on target
+    while deteriorating for two or more weeks, **Green** on or better than target, **Grey** where
+    the submission is missing or incomplete. A Grey site is never ranked — it is a data issue.
+(2) The [N] sites that need a Director call, each with the exact evidence — metric, value, target,
     trend, source row
-(2) A three-question call plan for each, phrased to find out what is happening rather than to
+(3) A three-question call plan for each, phrased to find out what is happening rather than to
     confirm a conclusion
-(3) A one-week measurable commitment to ask for at each site
-(4) A separate list of scorecard data errors and missing submissions
+(4) A one-week measurable commitment to ask for at each site
+(5) A separate list of scorecard data errors and missing submissions
 
 Do not attribute a result to a manager where the data does not support it. A site with a missing
 submission is a data issue, not a performance issue — never rank it as if it scored zero.
@@ -50,3 +55,4 @@ submission is a data issue, not a performance issue — never rank it as if it s
 ## Change log
 
 - 2026-07-21 — Created from library v1.0 catalog — Field leadership
+- 2026-07-21 — Added RAG Status band sourced from existing targets; data issues take Grey, never a colour — Field leadership

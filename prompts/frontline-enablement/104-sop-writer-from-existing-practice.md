@@ -39,6 +39,11 @@ Then:
 (13) Steps that exist only because of a system limitation or a historical reason, flagged as
      candidates for elimination rather than documentation
 
+Write steps 5 to 11 to be followed by someone doing the task for the first time: sentences under 15
+words, one action per step, each starting with a verb, everyday words rather than internal jargon.
+Roughly a grade-6 reading level. Keep exact system, screen, field, and equipment names as they
+appear to the user — the person needs to match your words to what is in front of them.
+
 Do not invent a step to fill a gap in the source. An SOP with a plausible fabricated step is worse
 than one with an acknowledged hole.
 ```
@@ -58,3 +63,4 @@ than one with an acknowledged hole.
 ## Change log
 
 - 2026-07-21 — Created — Operations lead
+- 2026-07-21 — Added explicit reading-level constraint (sentences under 15 words, verb-first steps) — Field leadership

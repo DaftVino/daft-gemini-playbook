@@ -5,7 +5,7 @@
 - **Risk:** Yellow/Red
 - **Owner:** Technology lead
 - **Last reviewed:** 2026-07-21
-- **Required sources:** @Tickets, @Monitoring or Logs, @User Reports, @Vendor Updates, @Affected-Site List
+- **Required sources:** @Severity Matrix, @Tickets, @Monitoring or Logs, @User Reports, @Vendor Updates, @Affected-Site List
 - **Core blocks:** Evidence
 
 ## When to use
@@ -20,7 +20,11 @@ Review @Tickets, @Monitoring or Logs, @User Reports, @Vendor Updates, and @Affec
 [incident].
 
 Return:
-(1) Severity 1–4, with the rationale and the specific criteria met
+(1) Severity, assigned **using @Severity Matrix only** — quote the specific criteria met and the
+    level they map to. Do not apply a severity scale from general practice; ours defines the
+    escalation path, the update cadence, and who gets woken up. If @Severity Matrix is not attached
+    or does not cover this incident type, state "Insufficient evidence to conclude" for severity,
+    describe the impact in plain terms, and escalate to the Technology lead to set it.
 (2) Business impact: sites affected, functions degraded, customer impact, financial exposure —
     quantified where evidence exists, stated as unknown where it does not
 (3) Two explicit lists: confirmed facts, and unconfirmed reports
@@ -44,6 +48,8 @@ correct answer. Do not report a system as recovered on the basis of a vendor's a
   Preserve evidence before remediating.**
 - Verify affected-site counts against monitoring, not user reports — user reports systematically
   understate scope.
+- Confirm @Severity Matrix was attached. A severity assigned from general practice rather than from
+  ours will look reasonable and route the incident to the wrong people at the wrong hour.
 - Do not send the executive update until the facts/unconfirmed split has been checked by a second
   person.
 
@@ -54,3 +60,4 @@ correct answer. Do not report a system as recovered on the basis of a vendor's a
 ## Change log
 
 - 2026-07-21 — Created from library v1.0 catalog — Technology lead
+- 2026-07-21 — Severity now assigned from @Severity Matrix only, not from general practice — Technology lead

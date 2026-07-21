@@ -29,7 +29,9 @@ Return exactly this, and nothing else:
 
 Rules:
 - Three minutes spoken. Roughly 250 words.
-- Plain spoken language. Short sentences. No percentages unless the team already uses them.
+- Write it to be **said aloud**, not read off a page. Sentences under 15 words. Everyday words. No
+  abbreviations the team does not already say. No percentages unless the team already uses them.
+  If a line is awkward to say, rewrite it.
 - One focus item. Two is zero.
 - Do not name an individual in connection with anything negative.
 - Do not include financial detail beyond what the team can influence during the shift.
@@ -50,3 +52,4 @@ Rules:
 ## Change log
 
 - 2026-07-21 — Created — Field leadership
+- 2026-07-21 — Added explicit reading-level constraint (sentences under 15 words, verb-first steps) — Field leadership

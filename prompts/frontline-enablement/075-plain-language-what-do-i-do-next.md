@@ -17,7 +17,15 @@ about it. This is the most useful prompt in the library for people who use AI le
 
 ```text
 Using @Policy, @Process, @Email Thread, or @Dashboard, explain what [role] should do next about
-[topic]. Use short sentences and the words our team already uses.
+[topic].
+
+Write it to be read once, mid-shift, possibly by someone reading in a second language:
+- Sentences under 15 words. One idea per sentence.
+- Everyday words in place of technical or policy vocabulary, except where the exact term is what
+  the person must use when they escalate — keep those and explain them once.
+- Every instruction starts with a verb and names one action.
+- No abbreviations the team does not already say out loud.
+Roughly a grade-6 reading level. If a sentence needs re-reading to parse, rewrite it.
 
 Return only these headings, nothing else:
 
@@ -50,3 +58,4 @@ ask. Do not fill the gap with a reasonable-sounding answer. Someone will follow 
 ## Change log
 
 - 2026-07-21 — Created from library v1.0 catalog — Field leadership
+- 2026-07-21 — Added explicit reading-level constraint (sentences under 15 words, verb-first steps) — Field leadership

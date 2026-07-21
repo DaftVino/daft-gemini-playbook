@@ -30,6 +30,11 @@ Return, in this order and in plain language:
 7. Who owns the escalation
 8. A short FAQ from the questions actually asked during the incident
 
+Write it to be followed under pressure by someone who has not seen the problem before: sentences
+under 15 words, everyday words rather than technical ones, one action per numbered step, each step
+starting with a verb. Roughly a grade-6 reading level. Keep exact equipment names, part numbers,
+and error codes as they appear on the machine — those must match what the person is looking at.
+
 Separate **verified steps** — confirmed to have resolved it — from **suggested troubleshooting**
 that was tried but not confirmed. Merging the two produces an article that wastes time on shift.
 
@@ -51,3 +56,4 @@ employee-sensitive details.
 ## Change log
 
 - 2026-07-21 — Created from library v1.0 catalog — Operations lead
+- 2026-07-21 — Added explicit reading-level constraint (sentences under 15 words, verb-first steps) — Field leadership

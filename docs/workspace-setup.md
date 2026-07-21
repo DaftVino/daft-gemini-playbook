@@ -80,6 +80,7 @@ Gems later.
 | Chart of accounts and coding guide | AP, close, capitalization prompts | Controller |
 | Approval matrix and thresholds | Every Red prompt | Controller |
 | Escalation directory (by role) | Frontline and incident prompts | Operations |
+| Incident severity matrix | 041 and incident triage | Technology |
 | Policy index | HR, compliance, frontline prompts | HR |
 | Data dictionary for reporting sources | Data-quality and intake prompts | Technology |
 | Standard action-plan and incident templates | Action-plan prompts | Operations |

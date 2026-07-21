@@ -10,6 +10,20 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 ## [Unreleased]
 
+### Changed
+
+- Dashboard prompts 051, 052, 055, 057 gain a RAG Status band. Thresholds come from the existing
+  KPI definitions or cash policy — never from a figure the model supplies. A metric with a data
+  issue takes Grey rather than a colour, so an unverified number cannot be actioned as a result.
+- Frontline prompts 074, 075, 104, 106 gain an explicit reading-level constraint: sentences under
+  15 words, everyday words, one verb-first action per step. Exact equipment, system, and error-code
+  names are preserved so the reader can match the text to what is in front of them.
+- 041 now assigns incident severity from `@Severity Matrix` only, and declares insufficiency rather
+  than falling back on a general-practice scale. `@Severity Matrix` added to its required sources
+  and to the reference-file set in `docs/workspace-setup.md`.
+- 098 agenda times must now sum exactly to the meeting duration, and state what was cut if they do
+  not.
+
 ## [0.1.0] - 2026-07-21
 
 ### Added

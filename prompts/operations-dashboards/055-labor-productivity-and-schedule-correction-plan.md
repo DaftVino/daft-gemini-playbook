@@ -20,8 +20,14 @@ for [site / week]. Identify overstaffed and understaffed periods against the exi
 targets.
 
 Return:
-Day / Time segment | Sales or transactions | Scheduled hours | Actual hours | Target hours |
-Variance | Recommendation for the next schedule | Operational risk of the change
+Day / Time segment | Status | Sales or transactions | Scheduled hours | Actual hours | Target hours
+| Variance | Recommendation for the next schedule | Operational risk of the change
+
+Set Status from the existing productivity targets: **Red** where the variance is past the
+escalation threshold in either direction, **Amber** where it is off target but inside it, **Green**
+where it is on target, **Grey** where the forecast or timecard data for that period is missing or
+unapproved. Understaffed periods are flagged with the same severity as overstaffed ones — under
+tends to be reported less and costs more.
 
 Then, separately:
 (1) Periods where scheduled and actual hours diverge materially — which is a schedule-adherence
@@ -50,3 +56,4 @@ naming what it puts at risk is incomplete.
 ## Change log
 
 - 2026-07-21 — Created from library v1.0 catalog — Field leadership
+- 2026-07-21 — Added RAG Status band sourced from existing targets; data issues take Grey, never a colour — Field leadership

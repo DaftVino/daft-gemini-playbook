@@ -19,8 +19,14 @@ Review @Cash Summary, @Deposit Log, @Bank Detail, @Safe Count, and @Paid-Out Det
 date range]. Create an exception handoff for the site manager and the accounting reviewer.
 
 Return:
-Date | Expected cash or deposit | Actual | Difference | Age (days) | Supporting record missing |
-Required verification | Site owner | Accounting owner | Escalation date
+Date | Status | Expected cash or deposit | Actual | Difference | Age (days) | Supporting record
+missing | Required verification | Site owner | Accounting owner | Escalation date
+
+Set Status by amount and age against the thresholds in the cash-handling policy: **Red** past the
+escalation threshold, or any item in a recurring pattern, **Amber** outside tolerance but inside
+the threshold, **Green** within tolerance, **Grey** where the supporting record has not yet been
+located and the difference may not be real. Do not colour an item Red on amount alone if it is a
+known deposit in transit.
 
 Then separate into:
 (1) Timing differences — deposits in transit, weekend and holiday effects
@@ -49,3 +55,4 @@ possible loss, duplicate, or timing items for review, and state which they are.
 ## Change log
 
 - 2026-07-21 — Created from library v1.0 catalog — Controller
+- 2026-07-21 — Added RAG Status band sourced from existing targets; data issues take Grey, never a colour — Field leadership
