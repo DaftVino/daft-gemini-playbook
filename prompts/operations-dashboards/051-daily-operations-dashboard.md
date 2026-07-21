@@ -51,7 +51,9 @@ Rules:
 - Check the dashboard refreshed before running this. A stale dashboard produces a confident,
   perfectly formatted report about yesterday.
 - Confirm @KPI Definitions actually carries escalation thresholds. Without them the Status column
-  is the model's opinion wearing a traffic light, which is worse than no column at all.
+  is the model's opinion wearing a traffic light, which is worse than no column at all. If that file
+  does not exist yet, build it from
+  [`templates/kpi-definitions-template.md`](../../templates/kpi-definitions-template.md).
 - Confirm the data-issue section is empty for a reason, not because the prompt did not look.
 - Nothing here supports a conversation about an individual's performance.
 

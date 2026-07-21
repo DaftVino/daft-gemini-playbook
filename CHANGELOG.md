@@ -10,6 +10,17 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 ## [Unreleased]
 
+### Added
+
+- `templates/kpi-definitions-template.md` — the reference file the dashboard RAG bands read their
+  thresholds from. Covers definition-as-implemented, denominators, refresh timing, target versus
+  escalation threshold, peer grouping, and excluded sites.
+- `templates/approval-matrix-template.md` — resolves the "authorized reviewer" role named by all 20
+  Red-tier prompts to a person with a stated limit. Covers financial, people, legal, and access
+  authority, plus delegation and absence.
+- `docs/workspace-setup.md` Stage 2 now states which reference files unblock the pilot and which
+  gate the Red tier, so the two tracks can proceed independently.
+
 ## [0.2.0] - 2026-07-21
 
 ### Added

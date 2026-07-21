@@ -72,13 +72,25 @@ Prompts reference organizational context that must not live in this repository. 
 Shared Drive, keep them current, and name them consistently — they become the Knowledge attached to
 Gems later.
 
+**You do not need all of these to start.** They divide into two tracks that do not block each other:
+
+- **To run the pilot** you need the KPI definitions with targets and escalation thresholds, your
+  cash-handling tolerances, and the escalation directory. Six of the eight fast-path prompts need
+  nothing but material the user already has open. Build these three and Stage 4 can begin.
+- **To put the Red tier into production** you need the approval matrix. Twenty prompts name an
+  authorized reviewer, and until that file resolves those roles to people with stated limits, the
+  instruction to "flag for the authorized reviewer" has nowhere to point. Keep Red prompts out of
+  production until it exists.
+
+The rest can follow as the prompts that need them come into use.
+
 | Reference file | Used by | Owner |
 |---|---|---|
 | Entity list and structure | Finance, lease, insurance prompts | Controller |
 | Site / location master list | Nearly everything | Operations |
-| KPI definitions and targets | All dashboard prompts | Finance / Operations |
+| KPI definitions and targets — start from [`templates/kpi-definitions-template.md`](../templates/kpi-definitions-template.md) | All dashboard prompts | Finance / Operations |
 | Chart of accounts and coding guide | AP, close, capitalization prompts | Controller |
-| Approval matrix and thresholds | Every Red prompt | Controller |
+| Approval matrix and thresholds — start from [`templates/approval-matrix-template.md`](../templates/approval-matrix-template.md) | Every Red prompt (20 of them) | Controller |
 | Escalation directory (by role) | Frontline and incident prompts | Operations |
 | Incident severity matrix — start from [`templates/severity-matrix-template.md`](../templates/severity-matrix-template.md) | 041 and incident triage | Technology |
 | Policy index | HR, compliance, frontline prompts | HR |
