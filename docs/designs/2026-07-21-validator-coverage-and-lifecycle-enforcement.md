@@ -1,8 +1,20 @@
 # Validator coverage and lifecycle enforcement
 
-- **Status:** Proposed
+- **Status:** Implemented 2026-07-22, released in v0.3.0
 - **Date:** 2026-07-21
-- **Issues:** validator test harness · sanitization scan coverage · retirement lifecycle · security policy
+- **Issues:** [#3](https://github.com/DaftVino/daft-gemini-playbook/issues/3) validator test harness ·
+  [#2](https://github.com/DaftVino/daft-gemini-playbook/issues/2) sanitization scan coverage ·
+  [#4](https://github.com/DaftVino/daft-gemini-playbook/issues/4) retirement lifecycle ·
+  [#5](https://github.com/DaftVino/daft-gemini-playbook/issues/5) security policy
+
+D1–D6 landed as specified, with two additions the plan did not anticipate, both found by running
+the work against this repository rather than by reasoning about it:
+
+- **Per-pattern sanitization coverage.** D3 assumed coverage of an error *code* was coverage of the
+  rule. It is not: `E_LEAK` spans five patterns, and mutation testing showed the government-ID
+  regex could be deleted with the suite still green. The test now asserts every pattern is tripped.
+- **Markers are read from prose only.** D2 did not consider that documentation quoting the marker
+  would either grant itself a waiver or report itself as malformed. Both happened on the first run.
 
 ## Context
 
