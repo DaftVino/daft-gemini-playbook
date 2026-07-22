@@ -60,7 +60,9 @@ the wider ecosystem treats specially: `README.md`, `LICENSE`, `CHANGELOG.md`, `C
 `ARCHITECTURE.md`.
 
 **Root files.** `README.md`, `LICENSE`, `CHANGELOG.md`, `CLAUDE.md`, `CONTRIBUTING.md`,
-`.gitignore`, `.gitattributes`. Anything else that reads like documentation belongs in `docs/`.
+`SECURITY.md`, `.gitignore`, `.gitattributes`. Anything else that reads like documentation belongs
+in `docs/`. The uppercase names are the ones GitHub and the wider ecosystem treat specially; the
+list is closed, and a new one is a decision rather than a convenience.
 
 **`docs/` is flat** apart from `adr/` and `designs/`. No `docs/bugs/`, `docs/fixes/`,
 `docs/plans/`, no `todo.md` — bugs are GitHub Issues, fixes are PRs, plans are `docs/designs/`,
