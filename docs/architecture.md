@@ -60,7 +60,9 @@ the wider ecosystem treats specially: `README.md`, `LICENSE`, `CHANGELOG.md`, `C
 `ARCHITECTURE.md`.
 
 **Root files.** `README.md`, `LICENSE`, `CHANGELOG.md`, `CLAUDE.md`, `CONTRIBUTING.md`,
-`.gitignore`, `.gitattributes`. Anything else that reads like documentation belongs in `docs/`.
+`SECURITY.md`, `.gitignore`, `.gitattributes`. Anything else that reads like documentation belongs
+in `docs/`. The uppercase names are the ones GitHub and the wider ecosystem treat specially; the
+list is closed, and a new one is a decision rather than a convenience.
 
 **`docs/` is flat** apart from `adr/` and `designs/`. No `docs/bugs/`, `docs/fixes/`,
 `docs/plans/`, no `todo.md` — bugs are GitHub Issues, fixes are PRs, plans are `docs/designs/`,
@@ -162,6 +164,9 @@ See [ADR 0003](adr/0003-human-approval-boundary.md).
 - risk label is one of the permitted values, and required core blocks are present for the label
 - required sections present, prompt fence present and non-empty
 - relative links resolve
+- retirement is well formed — a file in `prompts/retired/` carries a `Status` line, its reason
+  names a replacement or says there is none, and a named replacement actually exists
+- review cadence, as a warning: a prompt two cadence periods past its `Last reviewed` date
 - no obvious unsanitized content, across **every** Markdown file in the repository rather than
   `prompts/` alone — identity patterns (email, phone, government ID) are never waivable; figure
   patterns (long digit runs, `$` figures with 4+ digits) are waivable outside `prompts/` by a dated

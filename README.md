@@ -141,6 +141,9 @@ alongside structural checks. An address or phone number is an error anywhere and
 the invented figures a worked example needs are waivable, per file, by a dated attestation the
 reviewer sees in the diff.
 
+Found something here that looks like it came from a real organization? Report it privately —
+[`SECURITY.md`](SECURITY.md). Do not open a public issue, and do not paste the data into the report.
+
 ---
 
 ## Working in this repo

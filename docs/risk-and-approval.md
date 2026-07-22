@@ -82,7 +82,9 @@ A Yellow/Red prompt must tell the user what turns it Red. Standard triggers:
   prompt, because it still looks authoritative.
 - **Annually** for Green.
 - A prompt not reviewed within two cadence periods moves to `prompts/retired/` rather than staying
-  searchable as current guidance.
+  searchable as current guidance. `scripts/validate-prompts.mjs` warns once a prompt passes that
+  line — 183 days for Yellow and Red, 730 for Green. It warns rather than fails: the date passing
+  is a prompt to act on that file, not a reason to block unrelated work.
 
 ## Recording an approval
 

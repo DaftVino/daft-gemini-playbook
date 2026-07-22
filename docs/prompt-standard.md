@@ -19,11 +19,12 @@ Good: `076-ar-aging-and-collections-plan.md` · Bad: `076-finance-prompt-3.md`
 
 - **Category:** <folder's display name>
 - **Surface:** <where to run it>
-- **Risk:** <Green | Yellow | Yellow/Red | Red>
+- **Risk:** <Green | Green/Yellow | Yellow | Yellow/Red | Red>
 - **Owner:** <role, never a person>
 - **Last reviewed:** <YYYY-MM-DD>
 - **Required sources:** <@Source 1, @Source 2, …>
 - **Core blocks:** <None | Evidence | Evidence, Finance | Evidence, Legal/People/Risk | …>
+- **Status:** <retired prompts only — see Retiring a prompt>
 
 ## When to use
 <one or two sentences: the trigger>
@@ -56,8 +57,8 @@ List at most three, most-preferred first. "Anywhere" is not an answer — if a p
 anywhere it is probably too vague to be useful.
 
 ### Risk
-One of `Green`, `Yellow`, `Yellow/Red`, `Red`. Assignment rules and what each label obliges are in
-[`risk-and-approval.md`](risk-and-approval.md). When in doubt, label up.
+One of `Green`, `Green/Yellow`, `Yellow`, `Yellow/Red`, `Red`. Assignment rules and what each label
+obliges are in [`risk-and-approval.md`](risk-and-approval.md). When in doubt, label up.
 
 ### Owner
 A **role** — `Controller`, `Property lead`, `Technology lead`, `Field leadership`. Never a personal
@@ -67,6 +68,17 @@ being current and correct, not for running it.
 ### Last reviewed
 Date of the last substantive human review. Yellow and Red prompts are stale after one quarter;
 Green after one year. Editing a typo does not reset this date — reviewing the prompt does.
+
+The validator warns once a prompt is **two** cadence periods overdue — 183 days for Yellow and Red,
+730 for Green — which is the point at which
+[`risk-and-approval.md`](risk-and-approval.md#review-cadence) says it should be retired rather than
+left searchable. A warning, never an error: a date passing is not a reason to block someone else's
+unrelated PR, and a check that does that gets ignored.
+
+### Status
+Only ever used to record retirement, and only valid on a file in `prompts/retired/`. There is no
+`Active` or `Pilot` value — a prompt sitting in a category folder is current, and inventing states
+the governance does not distinguish would create a field nobody maintains. See *Retiring a prompt*.
 
 ### Required sources
 The exact `@`-referenced material a user must attach for the prompt to work, in the order the
@@ -156,3 +168,19 @@ Move the file to `prompts/retired/`, keep the ID, and add to the metadata block:
 ```
 
 Never delete. Other material links to the ID, and a dangling reference is worse than a tombstone.
+
+The validator enforces all of this:
+
+- A file in `prompts/retired/` **must** carry a `Status` line in the form
+  `Retired YYYY-MM-DD — <reason>`.
+- The reason must either name a replacement — `superseded by NNN` — or say `no replacement`
+  explicitly. "It was not useful" is not a disposition; the next person to follow an old reference
+  needs to know where to go.
+- A named replacement **must exist**. A tombstone pointing at an ID that was never written is worse
+  than no tombstone at all, because it reads as a redirect.
+- A `Status` line on a prompt still sitting in a category folder is an error. A retired prompt left
+  among the live ones still reads as current guidance, which is the exact failure retirement exists
+  to prevent.
+
+Retired prompts are listed in their own section of `prompts/index.md` and excluded from the
+category counts, so the headline number describes what is usable rather than what has ever existed.
