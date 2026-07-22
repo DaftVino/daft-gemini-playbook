@@ -58,13 +58,17 @@ export const ERROR_CODES = [
   'E_PROMPT_SHORT',
   'E_ACTION_VERB',
   'E_INSUFFICIENCY_MISSING',
+  'E_STATUS_MISSING',
+  'E_STATUS_FORMAT',
+  'E_STATUS_MISPLACED',
+  'E_SUPERSEDED_UNKNOWN',
   'E_LEAK',
   'E_LEAK_FIGURE',
   'E_MARKER_MALFORMED',
   'E_LINK_BROKEN',
 ];
 
-export const WARNING_CODES = ['W_OWNER_PERSON', 'W_MARKER_STALE'];
+export const WARNING_CODES = ['W_OWNER_PERSON', 'W_MARKER_STALE', 'W_REVIEW_STALE'];
 
 const RISKS = ['Green', 'Green/Yellow', 'Yellow', 'Yellow/Red', 'Red'];
 const REQUIRED_FIELDS = [
@@ -178,6 +182,28 @@ const SYNTHETIC_MARKER_LOOSE = /<!--\s*synthetic-data\b[^>]*-->/;
 /** Directories the sanitization scan never enters. */
 const SCAN_SKIP = new Set(['.git', 'node_modules', 'fixtures']);
 
+/**
+ * Retirement, as specified in docs/prompt-standard.md.
+ *
+ *   - **Status:** Retired 2026-11-04 — superseded by 084 `payroll-hr-compliance/084-<slug>.md`
+ *
+ * `Status` exists only to record retirement. There is no Active or Pilot value, because nothing in
+ * the library's governance distinguishes those states — a prompt in a category folder is current.
+ */
+const STATUS_RETIRED = /^Retired (\d{4}-\d{2}-\d{2}) — (.+)$/;
+const SUPERSEDED_BY = /\bsuperseded by (\d{3})\b/;
+const NO_REPLACEMENT = /\bno replacement\b/i;
+
+/**
+ * Review cadence from docs/risk-and-approval.md: quarterly for Yellow and Red, annually for Green,
+ * and a prompt unreviewed for two cadence periods should be retired rather than left searchable.
+ *
+ * A warning, never an error. A stale review date is a prompt to act on that prompt; it is not a
+ * reason to block an unrelated PR, and a validator that fails the build for the passage of time
+ * teaches people to ignore it.
+ */
+const STALE_DAYS = { high: 183, low: 730 };
+
 function walk(dir) {
   const out = [];
   for (const entry of readdirSync(dir)) {
@@ -267,6 +293,56 @@ function validate(file, state) {
     err('E_REVIEWED_FORMAT', `Last reviewed must be YYYY-MM-DD, got "${meta['Last reviewed']}"`);
   }
 
+  // --- retirement -----------------------------------------------------------
+  const isRetired = folder === 'retired';
+  const status = meta.Status;
+
+  if (isRetired && !status) {
+    err(
+      'E_STATUS_MISSING',
+      'a retired prompt must carry a Status line: Retired YYYY-MM-DD — <reason>. Other material links to this ID, and a tombstone with no reason reads as an accident'
+    );
+  }
+
+  if (status) {
+    const parsed = status.match(STATUS_RETIRED);
+    if (!parsed) {
+      err(
+        'E_STATUS_FORMAT',
+        `Status must read "Retired YYYY-MM-DD — <reason>", got "${status}". Status records retirement and nothing else`
+      );
+    } else if (!isRetired) {
+      err(
+        'E_STATUS_MISPLACED',
+        'a prompt with a Retired status must live in prompts/retired/ — a retired prompt left in a category folder still reads as current guidance'
+      );
+    } else {
+      const reason = parsed[2];
+      const supersededBy = reason.match(SUPERSEDED_BY);
+      if (supersededBy) {
+        // Checked after every file is walked: the replacement may sort after this one.
+        state.supersessions.push({ file: rel, id: supersededBy[1] });
+      } else if (!NO_REPLACEMENT.test(reason)) {
+        err(
+          'E_STATUS_FORMAT',
+          `retirement reason must name a replacement ("superseded by NNN") or say "no replacement", got "${reason}"`
+        );
+      }
+    }
+  }
+
+  // Review cadence. Retired prompts are exempt — they are already out of service.
+  if (!isRetired && /^\d{4}-\d{2}-\d{2}$/.test(meta['Last reviewed'] || '')) {
+    const days = Math.floor((state.now - new Date(meta['Last reviewed'])) / 86_400_000);
+    const limit = risk === 'Green' || risk === 'Green/Yellow' ? STALE_DAYS.low : STALE_DAYS.high;
+    if (days > limit) {
+      warn(
+        'W_REVIEW_STALE',
+        `last reviewed ${days} days ago, past the ${limit}-day limit for ${risk || 'this'} prompts — review it or retire it`
+      );
+    }
+  }
+
   const blocks = meta['Core blocks'] || '';
   if (risk === 'Red') {
     if (!/Evidence/.test(blocks)) {
@@ -347,6 +423,8 @@ function validate(file, state) {
     risk: risk || '',
     owner: meta.Owner || '',
     reviewed: meta['Last reviewed'] || '',
+    status: status || '',
+    retired: isRetired,
   });
 }
 
@@ -433,16 +511,30 @@ function scanSanitization(state) {
  * @param {string} [options.root]  repository root to validate; defaults to this repository
  * @returns {{errors: Array, warnings: Array, prompts: Array, seenIds: Map}}
  */
-export function runValidation({ root = ROOT } = {}) {
+export function runValidation({ root = ROOT, now = new Date() } = {}) {
   const state = {
     root,
+    now,
     promptsDir: join(root, 'prompts'),
     errors: [],
     warnings: [],
     prompts: [],
     seenIds: new Map(),
+    supersessions: [],
   };
   for (const file of walk(state.promptsDir).sort()) validate(file, state);
+
+  // Deferred until every ID is known — a replacement can sort after the prompt it replaces.
+  for (const { file, id } of state.supersessions) {
+    if (!state.seenIds.has(id)) {
+      state.errors.push({
+        file,
+        code: 'E_SUPERSEDED_UNKNOWN',
+        message: `superseded by ${id}, which is not a prompt in this library. A tombstone pointing at nothing is worse than no tombstone, because it reads as a redirect`,
+      });
+    }
+  }
+
   scanSanitization(state);
   return state;
 }
@@ -457,8 +549,11 @@ const slug = (s) =>
 
 /** Render prompts/index.md from validated prompt records. */
 export function buildIndex(prompts) {
+  const active = prompts.filter((p) => !p.retired);
+  const retired = prompts.filter((p) => p.retired).sort((a, b) => a.id.localeCompare(b.id));
+
   const byCategory = new Map(ORDER.map((f) => [f, []]));
-  for (const p of prompts) {
+  for (const p of active) {
     if (!byCategory.has(p.folder)) byCategory.set(p.folder, []);
     byCategory.get(p.folder).push(p);
   }
@@ -468,7 +563,7 @@ export function buildIndex(prompts) {
     '',
     '<!-- GENERATED by scripts/validate-prompts.mjs --write-index. Do not hand-edit. -->',
     '',
-    `${prompts.length} prompts across ${[...byCategory].filter(([, v]) => v.length).length} categories.`,
+    `${active.length} prompts across ${[...byCategory].filter(([, v]) => v.length).length} categories.`,
     'Risk labels and what each obliges: [docs/risk-and-approval.md](../docs/risk-and-approval.md).',
     '',
   ];
@@ -479,6 +574,7 @@ export function buildIndex(prompts) {
   lines.push('| Category | Prompts |', '|---|---:|', ...counts, '');
 
   for (const folder of ORDER) {
+    if (folder === 'retired') continue;
     const rows = (byCategory.get(folder) || []).sort((a, b) => a.id.localeCompare(b.id));
     if (!rows.length) continue;
     lines.push(`## ${CATEGORIES[folder]}`, '');
@@ -487,6 +583,22 @@ export function buildIndex(prompts) {
       lines.push(
         `| ${r.id} | [${r.title}](${r.path.replace('prompts/', '')}) | ${r.surface} | ${r.risk} | ${r.owner} | ${r.reviewed} |`
       );
+    }
+    lines.push('');
+  }
+
+  // Retired prompts are listed, never dropped. The ID is what Gems, saved Docs, and training
+  // material reference, so a reader who follows an old reference has to land on a tombstone that
+  // says what replaced it rather than on nothing.
+  if (retired.length) {
+    lines.push('## Retired', '');
+    lines.push(
+      'Not for use. Listed because other material references these IDs, which are never reused.',
+      ''
+    );
+    lines.push('| ID | Prompt | Status |', '|---|---|---|');
+    for (const r of retired) {
+      lines.push(`| ${r.id} | [${r.title}](${r.path.replace('prompts/', '')}) | ${r.status} |`);
     }
     lines.push('');
   }

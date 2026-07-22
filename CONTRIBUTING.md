@@ -39,8 +39,9 @@ Read three things:
 
 - Wording, added validation steps, clearer output format → PATCH, note it in the file's change log.
 - New required source, changed output contract, changed risk label → MINOR, and re-test.
-- Retiring a prompt → move the file to `prompts/retired/`, set `Status: Retired` with a reason and
-  a pointer to its replacement. Do not delete it; other material links to its ID.
+- Retiring a prompt → move the file to `prompts/retired/`, set
+  `Status: Retired YYYY-MM-DD — superseded by NNN` (or `— no replacement`). Do not delete it; other
+  material links to its ID. The validator checks the form and that the replacement exists.
 
 ## Review checklist (what a reviewer will ask)
 
