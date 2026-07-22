@@ -12,7 +12,12 @@ Two roots, each shaped like a miniature repository:
   set of error codes per file, so a fixture that starts failing for a second reason fails the suite
   rather than passing for the wrong one.
 
-Fixture IDs start at 900 so they can never collide with a library prompt.
+Fixture IDs start at 900 so they can never collide with a library prompt. Each root also carries a
+`docs/` folder, because the sanitization scan reads every Markdown file rather than only `prompts/`
+and those rules need somewhere non-prompt to be exercised.
+
+`scripts/validate-prompts.mjs` never scans this directory during a normal run — several fixtures
+carry deliberate leak patterns, all of them invented.
 
 ## Adding a rule to the validator
 

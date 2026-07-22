@@ -12,6 +12,35 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 ### Added
 
+- `SECURITY.md` — a private disclosure route for anyone who finds real business data in a
+  repository that publicly asserts it holds none, plus for a prompt that instructs an action rather
+  than preparing one. Scoped to data exposure rather than vulnerabilities: the library ships no
+  executable code, so a CVE-shaped policy would misdescribe what is at risk.
+- `scripts/test-validator.mjs` and `scripts/fixtures/` — the validator now has a test suite. Every
+  error code has a fixture that trips it, every sanitization pattern is individually covered, and
+  the suite fails if a new rule arrives without one. The valid fixtures pin the cases that must
+  *pass*, including a prompt that says "Do not send it".
+- Retirement enforcement: a file in `prompts/retired/` must carry a well-formed `Status` line whose
+  named replacement actually exists, and `prompts/index.md` lists retired prompts separately from
+  the live catalog.
+- A review-cadence warning at two cadence periods past `Last reviewed`, per
+  `docs/risk-and-approval.md`.
+
+### Changed
+
+- The sanitization backstop now scans **every** Markdown file rather than `prompts/` alone, which
+  had left `examples/` — the directory whose whole job is holding realistic-looking figures —
+  unchecked. Identity patterns (email, phone, government ID) are errors anywhere and cannot be
+  waived; figure patterns are waivable per file, outside `prompts/`, by a dated
+  `synthetic-data` attestation.
+- The ADR 0003 action check widened from seven phrases to sixteen. *Email it to the landlord*,
+  *pay the invoice*, and *revoke their access* previously passed clean.
+
+### Fixed
+
+- `docs/prompt-standard.md` documented four risk labels while the validator and five prompts use
+  `Green/Yellow`.
+
 - `templates/kpi-definitions-template.md` — the reference file the dashboard RAG bands read their
   thresholds from. Covers definition-as-implemented, denominators, refresh timing, target versus
   escalation threshold, peer grouping, and excluded sites.

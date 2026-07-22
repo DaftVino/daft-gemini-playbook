@@ -110,7 +110,32 @@ reliably misses something.
 
 ### Enforcement
 
-`scripts/validate-prompts.mjs` flags likely leaks — email addresses, long digit runs, dollar amounts
-of four or more digits, phone-number patterns. It is a backstop with a high false-negative rate, not
-a substitute for the author's judgement. Enable secret scanning and push protection on the remote,
-and install a gitleaks pre-commit hook so a credential never reaches history in the first place.
+`scripts/validate-prompts.mjs` scans **every Markdown file in the repository**, not only `prompts/`.
+It is a backstop with a high false-negative rate, not a substitute for the author's judgement.
+
+The patterns divide by what they detect, and that division decides what can be waived:
+
+| Class | Patterns | Waivable |
+|---|---|---|
+| **Identity** | email address, phone number, government ID | **Never**, in any file, for any reason |
+| **Figure** | dollar amounts of four or more digits, long digit runs | Yes — see below |
+
+A figure that could have come from a real report is legitimate in a worked example: plausible
+fictional data is what makes an example teach, and one whose every number is `$X` teaches nothing.
+So a file outside `prompts/` may waive figure findings by carrying, near the top:
+
+```markdown
+<!-- synthetic-data: reviewed 2026-07-21 -->
+```
+
+That is an attestation by a named reviewer at a named date, not a configuration setting. It waives
+figures in that file and nothing else. It never waives an identity pattern — an author's belief
+that an address is invented is not evidence that it is. It does not apply inside `prompts/`, where
+the standard already requires `[bracketed]` placeholders and `$X`. A marker on a file with nothing
+to waive warns, so it does not sit there implying a review that no longer means anything.
+
+Prevention still belongs upstream of all of this. Enable secret scanning and push protection on the
+remote, and install a gitleaks pre-commit hook so a credential never reaches history in the first
+place. Note what that hook is for: gitleaks finds **credentials**. It will not recognize an entity
+name, a vendor, or an internal threshold, which is the exposure this repository actually risks.
+Those are caught by review, or not at all.

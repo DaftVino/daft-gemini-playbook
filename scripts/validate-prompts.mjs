@@ -58,11 +58,17 @@ export const ERROR_CODES = [
   'E_PROMPT_SHORT',
   'E_ACTION_VERB',
   'E_INSUFFICIENCY_MISSING',
+  'E_STATUS_MISSING',
+  'E_STATUS_FORMAT',
+  'E_STATUS_MISPLACED',
+  'E_SUPERSEDED_UNKNOWN',
   'E_LEAK',
+  'E_LEAK_FIGURE',
+  'E_MARKER_MALFORMED',
   'E_LINK_BROKEN',
 ];
 
-export const WARNING_CODES = ['W_OWNER_PERSON'];
+export const WARNING_CODES = ['W_OWNER_PERSON', 'W_MARKER_STALE', 'W_REVIEW_STALE'];
 
 const RISKS = ['Green', 'Green/Yellow', 'Yellow', 'Yellow/Red', 'Red'];
 const REQUIRED_FIELDS = [
@@ -137,21 +143,66 @@ const INSUFFICIENCY = [
 ];
 
 /**
- * Heuristic sanitization checks. High false-negative rate by design — a backstop, not a gate.
+ * Heuristic sanitization checks, run over every Markdown file in the repository. High
+ * false-negative rate by design — a backstop, not a gate.
  *
- * Exported because the test suite asserts that *every* pattern here is tripped by a fixture.
- * One shared E_LEAK code across five patterns would otherwise let four of them be deleted without
- * a test noticing, which is how a sanitization check quietly stops sanitizing.
+ * The patterns split by what they detect, and the split decides what may be waived:
+ *
+ * - `identity` — a real person or account is named. Never legitimate in this repository, in any
+ *   file, for any reason. No exemption exists.
+ * - `figure` — a specific number that could have come from a real report. Legitimate in a worked
+ *   example, where plausible fictional data is the point and an example whose every number is
+ *   `$X` teaches nothing. Waivable per file by attestation, outside `prompts/`.
+ *
+ * Exported because the test suite asserts that *every* pattern here is tripped by a fixture. One
+ * shared code across five patterns previously let four of them be deleted without a test noticing,
+ * which is how a sanitization check quietly stops sanitizing.
  */
 export const LEAK_PATTERNS = [
-  { re: /[\w.+-]+@[\w-]+\.[\w.]{2,}/g, what: 'email address' },
-  { re: /\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, what: 'phone number' },
-  { re: /\b\d{3}-\d{2}-\d{4}\b/g, what: 'government ID pattern' },
-  { re: /\$\s?\d{1,3}(,\d{3})+(\.\d+)?/g, what: 'specific dollar amount' },
-  { re: /\b\d{9,}\b/g, what: 'long digit run (account number?)' },
+  { re: /[\w.+-]+@[\w-]+\.[\w.]{2,}/g, what: 'email address', kind: 'identity' },
+  { re: /\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, what: 'phone number', kind: 'identity' },
+  { re: /\b\d{3}-\d{2}-\d{4}\b/g, what: 'government ID pattern', kind: 'identity' },
+  { re: /\$\s?\d{1,3}(,\d{3})+(\.\d+)?/g, what: 'specific dollar amount', kind: 'figure' },
+  { re: /\b\d{9,}\b/g, what: 'long digit run (account number?)', kind: 'figure' },
 ];
 /** Placeholder forms that look like leaks but are not. */
 const LEAK_ALLOW = [/\$\[/, /\$X/, /support\.google\.com/, /workspace\.google\.com/];
+
+/**
+ * Per-file attestation that the figures in a file are invented.
+ *
+ * Deliberately a dated, diffable line a reviewer sees in the PR, rather than a directory rule that
+ * becomes invisible the moment it is written. Exempting `examples/**` wholesale would mean the
+ * next author never meets the question; this way adding the marker is a small act of attention,
+ * and the date records when that attention happened.
+ */
+const SYNTHETIC_MARKER = /<!--\s*synthetic-data:\s*reviewed\s+(\d{4}-\d{2}-\d{2})\s*-->/;
+const SYNTHETIC_MARKER_LOOSE = /<!--\s*synthetic-data\b[^>]*-->/;
+
+/** Directories the sanitization scan never enters. */
+const SCAN_SKIP = new Set(['.git', 'node_modules', 'fixtures']);
+
+/**
+ * Retirement, as specified in docs/prompt-standard.md.
+ *
+ *   - **Status:** Retired 2026-11-04 — superseded by 084 `payroll-hr-compliance/084-<slug>.md`
+ *
+ * `Status` exists only to record retirement. There is no Active or Pilot value, because nothing in
+ * the library's governance distinguishes those states — a prompt in a category folder is current.
+ */
+const STATUS_RETIRED = /^Retired (\d{4}-\d{2}-\d{2}) — (.+)$/;
+const SUPERSEDED_BY = /\bsuperseded by (\d{3})\b/;
+const NO_REPLACEMENT = /\bno replacement\b/i;
+
+/**
+ * Review cadence from docs/risk-and-approval.md: quarterly for Yellow and Red, annually for Green,
+ * and a prompt unreviewed for two cadence periods should be retired rather than left searchable.
+ *
+ * A warning, never an error. A stale review date is a prompt to act on that prompt; it is not a
+ * reason to block an unrelated PR, and a validator that fails the build for the passage of time
+ * teaches people to ignore it.
+ */
+const STALE_DAYS = { high: 183, low: 730 };
 
 function walk(dir) {
   const out = [];
@@ -242,6 +293,56 @@ function validate(file, state) {
     err('E_REVIEWED_FORMAT', `Last reviewed must be YYYY-MM-DD, got "${meta['Last reviewed']}"`);
   }
 
+  // --- retirement -----------------------------------------------------------
+  const isRetired = folder === 'retired';
+  const status = meta.Status;
+
+  if (isRetired && !status) {
+    err(
+      'E_STATUS_MISSING',
+      'a retired prompt must carry a Status line: Retired YYYY-MM-DD — <reason>. Other material links to this ID, and a tombstone with no reason reads as an accident'
+    );
+  }
+
+  if (status) {
+    const parsed = status.match(STATUS_RETIRED);
+    if (!parsed) {
+      err(
+        'E_STATUS_FORMAT',
+        `Status must read "Retired YYYY-MM-DD — <reason>", got "${status}". Status records retirement and nothing else`
+      );
+    } else if (!isRetired) {
+      err(
+        'E_STATUS_MISPLACED',
+        'a prompt with a Retired status must live in prompts/retired/ — a retired prompt left in a category folder still reads as current guidance'
+      );
+    } else {
+      const reason = parsed[2];
+      const supersededBy = reason.match(SUPERSEDED_BY);
+      if (supersededBy) {
+        // Checked after every file is walked: the replacement may sort after this one.
+        state.supersessions.push({ file: rel, id: supersededBy[1] });
+      } else if (!NO_REPLACEMENT.test(reason)) {
+        err(
+          'E_STATUS_FORMAT',
+          `retirement reason must name a replacement ("superseded by NNN") or say "no replacement", got "${reason}"`
+        );
+      }
+    }
+  }
+
+  // Review cadence. Retired prompts are exempt — they are already out of service.
+  if (!isRetired && /^\d{4}-\d{2}-\d{2}$/.test(meta['Last reviewed'] || '')) {
+    const days = Math.floor((state.now - new Date(meta['Last reviewed'])) / 86_400_000);
+    const limit = risk === 'Green' || risk === 'Green/Yellow' ? STALE_DAYS.low : STALE_DAYS.high;
+    if (days > limit) {
+      warn(
+        'W_REVIEW_STALE',
+        `last reviewed ${days} days ago, past the ${limit}-day limit for ${risk || 'this'} prompts — review it or retire it`
+      );
+    }
+  }
+
   const blocks = meta['Core blocks'] || '';
   if (risk === 'Red') {
     if (!/Evidence/.test(blocks)) {
@@ -301,13 +402,7 @@ function validate(file, state) {
     }
   }
 
-  // --- sanitization backstop ------------------------------------------------
-  for (const { re, what } of LEAK_PATTERNS) {
-    for (const hit of raw.match(re) || []) {
-      if (LEAK_ALLOW.some((a) => a.test(hit))) continue;
-      err('E_LEAK', `possible unsanitized ${what}: "${hit}" — see docs/data-handling-rules.md`, what);
-    }
-  }
+  // Sanitization is not checked here — it runs repo-wide in scanSanitization().
 
   // --- relative links -------------------------------------------------------
   for (const m of raw.matchAll(/\]\((?!https?:|#)([^)]+)\)/g)) {
@@ -328,7 +423,85 @@ function validate(file, state) {
     risk: risk || '',
     owner: meta.Owner || '',
     reviewed: meta['Last reviewed'] || '',
+    status: status || '',
+    retired: isRetired,
   });
+}
+
+/** Every Markdown file under `dir`, skipping the directories the scan never enters. */
+function walkMarkdown(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    if (SCAN_SKIP.has(entry)) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) out.push(...walkMarkdown(full));
+    else if (entry.endsWith('.md')) out.push(full);
+  }
+  return out;
+}
+
+/**
+ * Sanitization backstop over every Markdown file in the repository — not only `prompts/`.
+ *
+ * The narrower version of this check read `prompts/` alone, which left `examples/` unscanned. That
+ * is the one directory whose entire job is holding realistic-looking figures, and the material most
+ * likely to be written by pasting something real and editing it down.
+ */
+function scanSanitization(state) {
+  for (const file of walkMarkdown(state.root).sort()) {
+    const rel = relative(state.root, file).split(sep).join('/');
+    const raw = readFileSync(file, 'utf8');
+    const inPrompts = rel.startsWith('prompts/');
+
+    // Markers are read from prose only — not from fenced blocks, not from inline code spans. Every
+    // document that explains the marker quotes it, in both forms, and a marker inside code
+    // formatting is a quotation rather than a declaration. Without this, documenting the feature
+    // would either grant waivers or report itself as malformed.
+    //
+    // The leak patterns themselves still read the whole file. Prompt bodies are fenced, and they
+    // are the main thing being checked.
+    const unfenced = raw.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
+
+    const marker = unfenced.match(SYNTHETIC_MARKER);
+    if (!marker && SYNTHETIC_MARKER_LOOSE.test(unfenced)) {
+      state.errors.push({
+        file: rel,
+        code: 'E_MARKER_MALFORMED',
+        message:
+          'synthetic-data marker must read <!-- synthetic-data: reviewed YYYY-MM-DD --> — as written it waives nothing',
+      });
+    }
+
+    // A prompt has no legitimate use for a specific figure: the standard requires bracketed
+    // placeholders and `$X`. The waiver exists for worked examples, so it stops at prompts/.
+    const waivesFigures = Boolean(marker) && !inPrompts;
+    let figureHits = 0;
+
+    for (const { re, what, kind } of LEAK_PATTERNS) {
+      for (const hit of raw.match(re) || []) {
+        if (LEAK_ALLOW.some((a) => a.test(hit))) continue;
+        if (kind === 'figure') {
+          figureHits += 1;
+          if (waivesFigures) continue;
+        }
+        state.errors.push({
+          file: rel,
+          code: kind === 'identity' ? 'E_LEAK' : 'E_LEAK_FIGURE',
+          message: `possible unsanitized ${what}: "${hit}" — see docs/data-handling-rules.md`,
+          detail: what,
+        });
+      }
+    }
+
+    if (marker && figureHits === 0) {
+      state.warnings.push({
+        file: rel,
+        code: 'W_MARKER_STALE',
+        message:
+          'synthetic-data marker waives nothing in this file — remove it so the next reader is not misled about what was reviewed',
+      });
+    }
+  }
 }
 
 /**
@@ -338,16 +511,31 @@ function validate(file, state) {
  * @param {string} [options.root]  repository root to validate; defaults to this repository
  * @returns {{errors: Array, warnings: Array, prompts: Array, seenIds: Map}}
  */
-export function runValidation({ root = ROOT } = {}) {
+export function runValidation({ root = ROOT, now = new Date() } = {}) {
   const state = {
     root,
+    now,
     promptsDir: join(root, 'prompts'),
     errors: [],
     warnings: [],
     prompts: [],
     seenIds: new Map(),
+    supersessions: [],
   };
   for (const file of walk(state.promptsDir).sort()) validate(file, state);
+
+  // Deferred until every ID is known — a replacement can sort after the prompt it replaces.
+  for (const { file, id } of state.supersessions) {
+    if (!state.seenIds.has(id)) {
+      state.errors.push({
+        file,
+        code: 'E_SUPERSEDED_UNKNOWN',
+        message: `superseded by ${id}, which is not a prompt in this library. A tombstone pointing at nothing is worse than no tombstone, because it reads as a redirect`,
+      });
+    }
+  }
+
+  scanSanitization(state);
   return state;
 }
 
@@ -361,8 +549,11 @@ const slug = (s) =>
 
 /** Render prompts/index.md from validated prompt records. */
 export function buildIndex(prompts) {
+  const active = prompts.filter((p) => !p.retired);
+  const retired = prompts.filter((p) => p.retired).sort((a, b) => a.id.localeCompare(b.id));
+
   const byCategory = new Map(ORDER.map((f) => [f, []]));
-  for (const p of prompts) {
+  for (const p of active) {
     if (!byCategory.has(p.folder)) byCategory.set(p.folder, []);
     byCategory.get(p.folder).push(p);
   }
@@ -372,7 +563,7 @@ export function buildIndex(prompts) {
     '',
     '<!-- GENERATED by scripts/validate-prompts.mjs --write-index. Do not hand-edit. -->',
     '',
-    `${prompts.length} prompts across ${[...byCategory].filter(([, v]) => v.length).length} categories.`,
+    `${active.length} prompts across ${[...byCategory].filter(([, v]) => v.length).length} categories.`,
     'Risk labels and what each obliges: [docs/risk-and-approval.md](../docs/risk-and-approval.md).',
     '',
   ];
@@ -383,6 +574,7 @@ export function buildIndex(prompts) {
   lines.push('| Category | Prompts |', '|---|---:|', ...counts, '');
 
   for (const folder of ORDER) {
+    if (folder === 'retired') continue;
     const rows = (byCategory.get(folder) || []).sort((a, b) => a.id.localeCompare(b.id));
     if (!rows.length) continue;
     lines.push(`## ${CATEGORIES[folder]}`, '');
@@ -391,6 +583,22 @@ export function buildIndex(prompts) {
       lines.push(
         `| ${r.id} | [${r.title}](${r.path.replace('prompts/', '')}) | ${r.surface} | ${r.risk} | ${r.owner} | ${r.reviewed} |`
       );
+    }
+    lines.push('');
+  }
+
+  // Retired prompts are listed, never dropped. The ID is what Gems, saved Docs, and training
+  // material reference, so a reader who follows an old reference has to land on a tombstone that
+  // says what replaced it rather than on nothing.
+  if (retired.length) {
+    lines.push('## Retired', '');
+    lines.push(
+      'Not for use. Listed because other material references these IDs, which are never reused.',
+      ''
+    );
+    lines.push('| ID | Prompt | Status |', '|---|---|---|');
+    for (const r of retired) {
+      lines.push(`| ${r.id} | [${r.title}](${r.path.replace('prompts/', '')}) | ${r.status} |`);
     }
     lines.push('');
   }
