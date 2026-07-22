@@ -145,7 +145,13 @@ reusable. [`docs/data-handling-rules.md`](docs/data-handling-rules.md)
 ```bash
 node scripts/validate-prompts.mjs                 # structure, IDs, risk labels, links, leak check
 node scripts/validate-prompts.mjs --write-index    # regenerate prompts/index.md
+node scripts/test-validator.mjs                    # prove the checks above actually fire
 ```
+
+The third command is the one worth explaining. A validator nobody has watched fail is not evidence
+of anything, so every rule has a fixture that trips it in
+[`scripts/fixtures/`](scripts/fixtures/) — including the cases that must *pass*, like a prompt that
+says "Do not send it". CI runs all three on every PR.
 
 `prompts/index.md` is generated — never hand-edit it. Prompt IDs are permanent: never renumbered,
 never reused, because Gems, flows, saved Docs, and training material reference them.

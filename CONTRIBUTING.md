@@ -56,6 +56,10 @@ Read three things:
 Conventional Commits, GitHub Flow, squash-merge. Prompt content changes use `docs:` unless they
 change validation tooling.
 
+If you change `scripts/validate-prompts.mjs`, add a fixture in `scripts/fixtures/` for the rule you
+touched and run `node scripts/test-validator.mjs`. The suite fails if an error code has no fixture,
+so a new rule without one will not merge.
+
 ```
 docs(finance): add 76 ar aging and collections plan
 fix(validator): accept Yellow/Red compound risk labels

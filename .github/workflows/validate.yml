@@ -15,6 +15,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Test the validator
+        run: node scripts/test-validator.mjs
+
       - name: Validate prompt files
         run: node scripts/validate-prompts.mjs
 

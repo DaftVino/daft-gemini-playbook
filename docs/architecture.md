@@ -43,7 +43,7 @@ gemini-prompt-library/
 │                             #   and the reference files prompts depend on (KPI, approval, severity)
 ├── examples/                 # sanitized good-input / good-output pairs
 ├── docs/                     # governance, operating guides, Workspace runbooks, ADRs
-├── scripts/                  # validate-prompts.mjs
+├── scripts/                  # validate-prompts.mjs, its test suite, and their fixtures
 └── .github/                  # issue + PR templates, CI
 ```
 
@@ -164,7 +164,15 @@ See [ADR 0003](adr/0003-human-approval-boundary.md).
 - no obvious unsanitized content (long digit runs, email addresses, `$` figures with 4+ digits)
 - relative links resolve
 
-`--write-index` regenerates `prompts/index.md` from the files. CI runs the validator on every PR.
+`--write-index` regenerates `prompts/index.md` from the files.
+
+`node scripts/test-validator.mjs` checks the validator itself, against fixtures in
+`scripts/fixtures/`. Every error code has a file that trips it and the suite fails if a code has no
+fixture, because a rule nobody has watched fail is not evidence that the rule works. The `valid/`
+fixtures matter as much as the invalid ones: they prove that *Do not send it* is permitted where
+*Send it* is not, which is the distinction every safety instruction in the library depends on.
+
+CI runs both on every PR.
 
 ## What deliberately is not here
 
