@@ -136,7 +136,10 @@ This is not caution, it is what makes the prompts work — a prompt that says "c
 Northeast file" is useless to anyone without that file. Placeholders are both safer and more
 reusable. [`docs/data-handling-rules.md`](docs/data-handling-rules.md)
 
-`scripts/validate-prompts.mjs` backstops this in CI, alongside structural checks.
+`scripts/validate-prompts.mjs` backstops this in CI across every Markdown file in the repository,
+alongside structural checks. An address or phone number is an error anywhere and cannot be waived;
+the invented figures a worked example needs are waivable, per file, by a dated attestation the
+reviewer sees in the diff.
 
 ---
 

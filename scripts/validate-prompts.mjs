@@ -59,10 +59,12 @@ export const ERROR_CODES = [
   'E_ACTION_VERB',
   'E_INSUFFICIENCY_MISSING',
   'E_LEAK',
+  'E_LEAK_FIGURE',
+  'E_MARKER_MALFORMED',
   'E_LINK_BROKEN',
 ];
 
-export const WARNING_CODES = ['W_OWNER_PERSON'];
+export const WARNING_CODES = ['W_OWNER_PERSON', 'W_MARKER_STALE'];
 
 const RISKS = ['Green', 'Green/Yellow', 'Yellow', 'Yellow/Red', 'Red'];
 const REQUIRED_FIELDS = [
@@ -137,21 +139,44 @@ const INSUFFICIENCY = [
 ];
 
 /**
- * Heuristic sanitization checks. High false-negative rate by design — a backstop, not a gate.
+ * Heuristic sanitization checks, run over every Markdown file in the repository. High
+ * false-negative rate by design — a backstop, not a gate.
  *
- * Exported because the test suite asserts that *every* pattern here is tripped by a fixture.
- * One shared E_LEAK code across five patterns would otherwise let four of them be deleted without
- * a test noticing, which is how a sanitization check quietly stops sanitizing.
+ * The patterns split by what they detect, and the split decides what may be waived:
+ *
+ * - `identity` — a real person or account is named. Never legitimate in this repository, in any
+ *   file, for any reason. No exemption exists.
+ * - `figure` — a specific number that could have come from a real report. Legitimate in a worked
+ *   example, where plausible fictional data is the point and an example whose every number is
+ *   `$X` teaches nothing. Waivable per file by attestation, outside `prompts/`.
+ *
+ * Exported because the test suite asserts that *every* pattern here is tripped by a fixture. One
+ * shared code across five patterns previously let four of them be deleted without a test noticing,
+ * which is how a sanitization check quietly stops sanitizing.
  */
 export const LEAK_PATTERNS = [
-  { re: /[\w.+-]+@[\w-]+\.[\w.]{2,}/g, what: 'email address' },
-  { re: /\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, what: 'phone number' },
-  { re: /\b\d{3}-\d{2}-\d{4}\b/g, what: 'government ID pattern' },
-  { re: /\$\s?\d{1,3}(,\d{3})+(\.\d+)?/g, what: 'specific dollar amount' },
-  { re: /\b\d{9,}\b/g, what: 'long digit run (account number?)' },
+  { re: /[\w.+-]+@[\w-]+\.[\w.]{2,}/g, what: 'email address', kind: 'identity' },
+  { re: /\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, what: 'phone number', kind: 'identity' },
+  { re: /\b\d{3}-\d{2}-\d{4}\b/g, what: 'government ID pattern', kind: 'identity' },
+  { re: /\$\s?\d{1,3}(,\d{3})+(\.\d+)?/g, what: 'specific dollar amount', kind: 'figure' },
+  { re: /\b\d{9,}\b/g, what: 'long digit run (account number?)', kind: 'figure' },
 ];
 /** Placeholder forms that look like leaks but are not. */
 const LEAK_ALLOW = [/\$\[/, /\$X/, /support\.google\.com/, /workspace\.google\.com/];
+
+/**
+ * Per-file attestation that the figures in a file are invented.
+ *
+ * Deliberately a dated, diffable line a reviewer sees in the PR, rather than a directory rule that
+ * becomes invisible the moment it is written. Exempting `examples/**` wholesale would mean the
+ * next author never meets the question; this way adding the marker is a small act of attention,
+ * and the date records when that attention happened.
+ */
+const SYNTHETIC_MARKER = /<!--\s*synthetic-data:\s*reviewed\s+(\d{4}-\d{2}-\d{2})\s*-->/;
+const SYNTHETIC_MARKER_LOOSE = /<!--\s*synthetic-data\b[^>]*-->/;
+
+/** Directories the sanitization scan never enters. */
+const SCAN_SKIP = new Set(['.git', 'node_modules', 'fixtures']);
 
 function walk(dir) {
   const out = [];
@@ -301,13 +326,7 @@ function validate(file, state) {
     }
   }
 
-  // --- sanitization backstop ------------------------------------------------
-  for (const { re, what } of LEAK_PATTERNS) {
-    for (const hit of raw.match(re) || []) {
-      if (LEAK_ALLOW.some((a) => a.test(hit))) continue;
-      err('E_LEAK', `possible unsanitized ${what}: "${hit}" — see docs/data-handling-rules.md`, what);
-    }
-  }
+  // Sanitization is not checked here — it runs repo-wide in scanSanitization().
 
   // --- relative links -------------------------------------------------------
   for (const m of raw.matchAll(/\]\((?!https?:|#)([^)]+)\)/g)) {
@@ -331,6 +350,82 @@ function validate(file, state) {
   });
 }
 
+/** Every Markdown file under `dir`, skipping the directories the scan never enters. */
+function walkMarkdown(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    if (SCAN_SKIP.has(entry)) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) out.push(...walkMarkdown(full));
+    else if (entry.endsWith('.md')) out.push(full);
+  }
+  return out;
+}
+
+/**
+ * Sanitization backstop over every Markdown file in the repository — not only `prompts/`.
+ *
+ * The narrower version of this check read `prompts/` alone, which left `examples/` unscanned. That
+ * is the one directory whose entire job is holding realistic-looking figures, and the material most
+ * likely to be written by pasting something real and editing it down.
+ */
+function scanSanitization(state) {
+  for (const file of walkMarkdown(state.root).sort()) {
+    const rel = relative(state.root, file).split(sep).join('/');
+    const raw = readFileSync(file, 'utf8');
+    const inPrompts = rel.startsWith('prompts/');
+
+    // Markers are read from prose only — not from fenced blocks, not from inline code spans. Every
+    // document that explains the marker quotes it, in both forms, and a marker inside code
+    // formatting is a quotation rather than a declaration. Without this, documenting the feature
+    // would either grant waivers or report itself as malformed.
+    //
+    // The leak patterns themselves still read the whole file. Prompt bodies are fenced, and they
+    // are the main thing being checked.
+    const unfenced = raw.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
+
+    const marker = unfenced.match(SYNTHETIC_MARKER);
+    if (!marker && SYNTHETIC_MARKER_LOOSE.test(unfenced)) {
+      state.errors.push({
+        file: rel,
+        code: 'E_MARKER_MALFORMED',
+        message:
+          'synthetic-data marker must read <!-- synthetic-data: reviewed YYYY-MM-DD --> — as written it waives nothing',
+      });
+    }
+
+    // A prompt has no legitimate use for a specific figure: the standard requires bracketed
+    // placeholders and `$X`. The waiver exists for worked examples, so it stops at prompts/.
+    const waivesFigures = Boolean(marker) && !inPrompts;
+    let figureHits = 0;
+
+    for (const { re, what, kind } of LEAK_PATTERNS) {
+      for (const hit of raw.match(re) || []) {
+        if (LEAK_ALLOW.some((a) => a.test(hit))) continue;
+        if (kind === 'figure') {
+          figureHits += 1;
+          if (waivesFigures) continue;
+        }
+        state.errors.push({
+          file: rel,
+          code: kind === 'identity' ? 'E_LEAK' : 'E_LEAK_FIGURE',
+          message: `possible unsanitized ${what}: "${hit}" — see docs/data-handling-rules.md`,
+          detail: what,
+        });
+      }
+    }
+
+    if (marker && figureHits === 0) {
+      state.warnings.push({
+        file: rel,
+        code: 'W_MARKER_STALE',
+        message:
+          'synthetic-data marker waives nothing in this file — remove it so the next reader is not misled about what was reviewed',
+      });
+    }
+  }
+}
+
 /**
  * Validate every prompt file under `<root>/prompts`.
  *
@@ -348,6 +443,7 @@ export function runValidation({ root = ROOT } = {}) {
     seenIds: new Map(),
   };
   for (const file of walk(state.promptsDir).sort()) validate(file, state);
+  scanSanitization(state);
   return state;
 }
 

@@ -161,8 +161,12 @@ See [ADR 0003](adr/0003-human-approval-boundary.md).
 - ID uniqueness and filename/ID agreement
 - risk label is one of the permitted values, and required core blocks are present for the label
 - required sections present, prompt fence present and non-empty
-- no obvious unsanitized content (long digit runs, email addresses, `$` figures with 4+ digits)
 - relative links resolve
+- no obvious unsanitized content, across **every** Markdown file in the repository rather than
+  `prompts/` alone — identity patterns (email, phone, government ID) are never waivable; figure
+  patterns (long digit runs, `$` figures with 4+ digits) are waivable outside `prompts/` by a dated
+  `<!-- synthetic-data: reviewed YYYY-MM-DD -->` attestation, because a worked example needs
+  plausible numbers to teach anything. See [`data-handling-rules.md`](data-handling-rules.md).
 
 `--write-index` regenerates `prompts/index.md` from the files.
 

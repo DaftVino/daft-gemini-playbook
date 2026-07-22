@@ -39,14 +39,18 @@ const EXPECTED_ERRORS = {
   'prompts/finance-accounting/917-action-verb-widened.md': ['E_ACTION_VERB'],
   'prompts/finance-accounting/918-red-no-insufficiency.md': ['E_INSUFFICIENCY_MISSING'],
   // One finding per sanitization pattern — see that fixture's header for why it is the exception
-  // to one-violation-per-file.
+  // to one-violation-per-file. Three identity patterns, two figure patterns.
   'prompts/finance-accounting/919-leak.md': [
     'E_LEAK',
     'E_LEAK',
     'E_LEAK',
-    'E_LEAK',
-    'E_LEAK',
+    'E_LEAK_FIGURE',
+    'E_LEAK_FIGURE',
   ],
+  // The waiver stops at prompts/ — a prompt has no legitimate use for a specific figure.
+  'prompts/finance-accounting/922-marker-ignored-in-prompts.md': ['E_LEAK_FIGURE'],
+  'docs/malformed-marker.md': ['E_MARKER_MALFORMED'],
+  'docs/marker-does-not-waive-identity.md': ['E_LEAK'],
   'prompts/finance-accounting/920-broken-link.md': ['E_LINK_BROKEN'],
   'prompts/not-a-category/921-unknown-category.md': ['E_CATEGORY_UNKNOWN'],
 };
@@ -54,6 +58,7 @@ const EXPECTED_ERRORS = {
 /** file -> the exact set of warning codes that file must produce, sorted. */
 const EXPECTED_WARNINGS = {
   'prompts/finance-accounting/911-owner-person.md': ['W_OWNER_PERSON'],
+  'docs/stale-marker.md': ['W_MARKER_STALE'],
 };
 
 const groupCodes = (findings) => {
@@ -104,7 +109,8 @@ test('every sanitization pattern is tripped by a fixture', () => {
   // E_LEAK covers five separate patterns. Coverage of the code is not coverage of the patterns:
   // deleting the government-ID regex left this suite green until this test existed.
   const { errors } = runValidation({ root: fixtureRoot('invalid') });
-  const tripped = new Set(errors.filter((e) => e.code === 'E_LEAK').map((e) => e.detail));
+  const leakCodes = new Set(['E_LEAK', 'E_LEAK_FIGURE']);
+  const tripped = new Set(errors.filter((e) => leakCodes.has(e.code)).map((e) => e.detail));
   const untripped = LEAK_PATTERNS.map((p) => p.what).filter((w) => !tripped.has(w));
   assert.deepEqual(untripped, [], `sanitization patterns with no fixture: ${untripped.join(', ')}`);
 });
