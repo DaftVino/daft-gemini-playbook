@@ -136,7 +136,13 @@ This is not caution, it is what makes the prompts work — a prompt that says "c
 Northeast file" is useless to anyone without that file. Placeholders are both safer and more
 reusable. [`docs/data-handling-rules.md`](docs/data-handling-rules.md)
 
-`scripts/validate-prompts.mjs` backstops this in CI, alongside structural checks.
+`scripts/validate-prompts.mjs` backstops this in CI across every Markdown file in the repository,
+alongside structural checks. An address or phone number is an error anywhere and cannot be waived;
+the invented figures a worked example needs are waivable, per file, by a dated attestation the
+reviewer sees in the diff.
+
+Found something here that looks like it came from a real organization? Report it privately —
+[`SECURITY.md`](SECURITY.md). Do not open a public issue, and do not paste the data into the report.
 
 ---
 
@@ -145,7 +151,13 @@ reusable. [`docs/data-handling-rules.md`](docs/data-handling-rules.md)
 ```bash
 node scripts/validate-prompts.mjs                 # structure, IDs, risk labels, links, leak check
 node scripts/validate-prompts.mjs --write-index    # regenerate prompts/index.md
+node scripts/test-validator.mjs                    # prove the checks above actually fire
 ```
+
+The third command is the one worth explaining. A validator nobody has watched fail is not evidence
+of anything, so every rule has a fixture that trips it in
+[`scripts/fixtures/`](scripts/fixtures/) — including the cases that must *pass*, like a prompt that
+says "Do not send it". CI runs all three on every PR.
 
 `prompts/index.md` is generated — never hand-edit it. Prompt IDs are permanent: never renumbered,
 never reused, because Gems, flows, saved Docs, and training material reference them.

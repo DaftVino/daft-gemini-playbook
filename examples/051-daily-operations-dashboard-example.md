@@ -1,3 +1,5 @@
+<!-- synthetic-data: reviewed 2026-07-21 -->
+
 # Example — 051 Daily Operations Dashboard
 
 - **Prompt:** [051](../prompts/operations-dashboards/051-daily-operations-dashboard.md)
