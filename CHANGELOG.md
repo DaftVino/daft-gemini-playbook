@@ -10,8 +10,36 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-22
+
+Governance that was written down but not checked is now checked. No prompt changed — all 112
+validate identically and `prompts/index.md` regenerates byte-for-byte — so this release is almost
+entirely about whether the repository's own claims about itself hold up.
+
+The exception is the 057 example, which starts on the question none of the rest touches: not whether
+a prompt is well-formed, but whether it is right.
+
 ### Added
 
+- `examples/057-cash-deposit-and-paid-out-exception-handoff-example.md` — the first example carrying
+  **acceptance criteria**: the facts a correct run must extract, the facts it must mark unknown, the
+  conditions it must escalate, and the arithmetic with its answer. Its most useful line names the
+  specific plausible *wrong* answer, because a total that is seven times too large but correctly
+  formatted is the failure a reviewer in a hurry actually misses.
+
+  Not standardized. `templates/few-shot-example-template.md` and `docs/prompt-standard.md` are
+  unchanged, and the run record is empty because it has not been run against live sources. Nothing
+  here executes automatically — there is no way to drive Gemini-in-Workspace from CI, so this is a
+  human protocol with a scoring sheet, run by the owning role.
+
+- `templates/kpi-definitions-template.md` — the reference file the dashboard RAG bands read their
+  thresholds from. Covers definition-as-implemented, denominators, refresh timing, target versus
+  escalation threshold, peer grouping, and excluded sites.
+- `templates/approval-matrix-template.md` — resolves the "authorized reviewer" role named by all 20
+  Red-tier prompts to a person with a stated limit. Covers financial, people, legal, and access
+  authority, plus delegation and absence.
+- `docs/workspace-setup.md` Stage 2 now states which reference files unblock the pilot and which
+  gate the Red tier, so the two tracks can proceed independently.
 - `SECURITY.md` — a private disclosure route for anyone who finds real business data in a
   repository that publicly asserts it holds none, plus for a prompt that instructs an action rather
   than preparing one. Scoped to data exposure rather than vulnerabilities: the library ships no
@@ -40,15 +68,6 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
 
 - `docs/prompt-standard.md` documented four risk labels while the validator and five prompts use
   `Green/Yellow`.
-
-- `templates/kpi-definitions-template.md` — the reference file the dashboard RAG bands read their
-  thresholds from. Covers definition-as-implemented, denominators, refresh timing, target versus
-  escalation threshold, peer grouping, and excluded sites.
-- `templates/approval-matrix-template.md` — resolves the "authorized reviewer" role named by all 20
-  Red-tier prompts to a person with a stated limit. Covers financial, people, legal, and access
-  authority, plus delegation and absence.
-- `docs/workspace-setup.md` Stage 2 now states which reference files unblock the pilot and which
-  gate the Red tier, so the two tracks can proceed independently.
 
 ## [0.2.0] - 2026-07-21
 
@@ -91,6 +110,7 @@ Versioning is [SemVer](https://semver.org/) applied to library content:
   service) are isolated in `prompts/industry-multi-unit/` so the core stays applicable to any
   multi-entity, multi-site organization. See ADR 0002.
 
-[Unreleased]: https://github.com/DaftVino/daft-gemini-playbook/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/DaftVino/daft-gemini-playbook/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/DaftVino/daft-gemini-playbook/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/DaftVino/daft-gemini-playbook/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DaftVino/daft-gemini-playbook/releases/tag/v0.1.0
